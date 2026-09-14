@@ -14,11 +14,11 @@ export function SiteHeader({ landing }: { landing: boolean }) {
   return (
     <header className="fixed top-0 right-0 left-0 z-[60] pt-[env(safe-area-inset-top)]">
       <div className="px-3 py-2 sm:px-4">
-        <div className="glass flex flex-wrap items-center justify-between gap-2 rounded-2xl px-3 py-2">
+        <div className="glass flex items-center justify-between gap-2 rounded-2xl px-3 py-2">
           <Link href="/" className="shrink-0">
             <Logo compact />
           </Link>
-          <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+          <div className="flex min-w-0 flex-nowrap items-center justify-end gap-1.5 overflow-x-auto sm:gap-2">
             {user ? (
               <>
                 <Button href="/conta" variant="secondary" className="!w-auto !min-h-10 !py-2 !px-3 !text-[10px]">
@@ -42,7 +42,7 @@ export function SiteHeader({ landing }: { landing: boolean }) {
               DISCORD
             </Button>
             {hasInstagram ? (
-              <Button href={siteConfig.INSTAGRAM_URL} variant="instagram" className="!w-auto !min-h-10 !py-2 !px-3 !text-[10px]">
+              <Button href={siteConfig.INSTAGRAM_URL} variant="instagram" className="!hidden !w-auto !min-h-10 !py-2 !px-3 !text-[10px] sm:!inline-flex">
                 INSTAGRAM
               </Button>
             ) : null}

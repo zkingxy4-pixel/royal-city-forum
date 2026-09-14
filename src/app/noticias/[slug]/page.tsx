@@ -19,7 +19,7 @@ export default async function NewsPage({ params }: { params: Promise<{ slug: str
   if (!item) notFound();
 
   return (
-    <div className="min-h-screen bg-black px-4 pt-32 pb-16 sm:px-6">
+    <div className="min-h-screen bg-black px-4 pt-24 pb-16 sm:px-6 md:pt-16">
       <div className="mx-auto max-w-3xl">
         <Button href="/noticias" variant="ghost" className="!px-4 !py-2">
           VOLTAR PARA NOTÍCIAS

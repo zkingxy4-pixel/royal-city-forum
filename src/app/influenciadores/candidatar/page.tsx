@@ -13,7 +13,7 @@ export default async function CandidatarInfluencerPage({
   if (query.enviado) {
     const protocolo = query.protocolo?.trim();
     return (
-      <div className="min-h-screen bg-black px-4 pt-32 pb-16">
+      <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
         <div className="glass mx-auto w-full max-w-2xl rounded-2xl p-6 sm:p-8" role="status">
           <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">RELATÓRIO RECEBIDO</p>
           <h1 className="mt-3 font-display text-3xl sm:text-4xl">Obrigado. Seu pedido está com a equipe.</h1>
