@@ -1,3 +1,4 @@
+import "server-only";
 import mysql from "mysql2/promise";
 
 const globalForDb = globalThis as typeof globalThis & {
@@ -11,15 +12,24 @@ function isRetryableDbError(error: unknown) {
   return ["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT", "PROTOCOL_CONNECTION_LOST", "ER_ACCESS_DENIED_ERROR", "ER_BAD_DB_ERROR"].includes(code);
 }
 
+function requiredEnv(name: string) {
+  const value = process.env[name]?.trim();
+  if (!value) {
+    throw new Error(`${name} não está definido. Use o arquivo .env.local.`);
+  }
+  return value;
+}
+
 function createPool() {
   return mysql.createPool({
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT || 3306),
     user: process.env.DB_USER || "royalcity",
-    password: process.env.DB_PASSWORD || "RoyalCity#2026",
+    password: requiredEnv("DB_PASSWORD"),
     database: process.env.DB_NAME || "royal_city",
     waitForConnections: true,
     connectionLimit: 10,
+    enableKeepAlive: true,
   });
 }
 

@@ -1,8 +1,9 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { randomBytes } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { hash, compare } from "bcryptjs";
 import { insert, query } from "@/lib/db";
+import { isStrongPassword, isValidNickname } from "@/lib/security";
 
 export const SESSION_COOKIE = "royal_session";
 const SESSION_DAYS = 30;
@@ -36,6 +37,12 @@ export async function findUserByIdentifier(identifier: string) {
 }
 
 export async function createUser(nickname: string, email: string, password: string) {
+  if (!isValidNickname(nickname)) {
+    throw new Error("INVALID_NICKNAME");
+  }
+  if (!isStrongPassword(password)) {
+    throw new Error("WEAK_PASSWORD");
+  }
   const password_hash = await hashPassword(password);
   const result = await insert(`INSERT INTO users (nickname, email, password_hash) VALUES (?, ?, ?)`, [
     nickname,
@@ -45,12 +52,16 @@ export async function createUser(nickname: string, email: string, password: stri
   return { id: Number(result.insertId), nickname, email };
 }
 
+function tokenHash(token: string) {
+  return createHash("sha256").update(token).digest("hex");
+}
+
 export async function createSession(userId: number) {
   const token = randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
   await insert(`INSERT INTO sessions (user_id, token, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 DAY))`, [
     userId,
-    token,
+    tokenHash(token),
   ]);
   return { token, expires };
 }
@@ -62,13 +73,13 @@ export async function getUserBySessionToken(token: string) {
      INNER JOIN users u ON u.id = s.user_id
      WHERE s.token = ? AND s.expires_at > NOW()
      LIMIT 1`,
-    [token]
+    [tokenHash(token)]
   );
   return rows[0] || null;
 }
 
 export async function destroySession(token: string) {
-  await query(`DELETE FROM sessions WHERE token = ?`, [token]);
+  await query(`DELETE FROM sessions WHERE token = ?`, [tokenHash(token)]);
 }
 
 export async function setSessionCookie(token: string, expires: Date) {

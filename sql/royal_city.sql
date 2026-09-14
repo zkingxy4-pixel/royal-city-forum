@@ -1,17 +1,18 @@
 -- Royal City RP — banco MariaDB / HeidiSQL
 -- 1. Abra o HeidiSQL e conecte no MariaDB (geralmente 127.0.0.1, porta 3306, usuário root).
 -- 2. Arquivo > Executar arquivo SQL... e escolha este arquivo.
--- 3. No site, use o mesmo usuário/senha do arquivo .env.local
+-- 3. Crie o usuário royalcity com uma senha FORTE (nunca a mesma do GitHub).
+-- 4. Coloque a mesma senha em .env.local (DB_PASSWORD). Não coloque senha neste arquivo.
 
 CREATE DATABASE IF NOT EXISTS royal_city
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-CREATE USER IF NOT EXISTS 'royalcity'@'localhost' IDENTIFIED BY 'RoyalCity#2026';
-CREATE USER IF NOT EXISTS 'royalcity'@'127.0.0.1' IDENTIFIED BY 'RoyalCity#2026';
-GRANT ALL PRIVILEGES ON royal_city.* TO 'royalcity'@'localhost';
-GRANT ALL PRIVILEGES ON royal_city.* TO 'royalcity'@'127.0.0.1';
-FLUSH PRIVILEGES;
+-- CREATE USER IF NOT EXISTS 'royalcity'@'localhost' IDENTIFIED BY 'COLOQUE_UMA_SENHA_FORTE';
+-- CREATE USER IF NOT EXISTS 'royalcity'@'127.0.0.1' IDENTIFIED BY 'COLOQUE_UMA_SENHA_FORTE';
+-- GRANT ALL PRIVILEGES ON royal_city.* TO 'royalcity'@'localhost';
+-- GRANT ALL PRIVILEGES ON royal_city.* TO 'royalcity'@'127.0.0.1';
+-- FLUSH PRIVILEGES;
 
 USE royal_city;
 

@@ -17,11 +17,11 @@ export default async function EntrarPage({
         {query.erro ? <p className="mt-4 text-sm text-[#FF0000]">{query.erro}</p> : null}
         <label className="mt-6 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Apelido
-          <input required name="nickname" autoComplete="username" className={fieldClass} />
+          <input required name="nickname" minLength={2} maxLength={32} pattern="[A-Za-z0-9._-]+" title="Letras, números, ponto, _ ou -" autoComplete="username" className={fieldClass} />
         </label>
         <label className="mt-4 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Senha
-          <input required minLength={6} type="password" name="password" autoComplete="current-password" className={fieldClass} />
+          <input required minLength={8} maxLength={72} type="password" name="password" autoComplete="current-password" className={fieldClass} />
         </label>
         <div className="mt-6">
           <button

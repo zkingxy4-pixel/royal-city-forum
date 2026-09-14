@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import { cookies } from "next/headers";
 import { Cinzel, Outfit } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
-import { parsePortalSession, PORTAL_COOKIE } from "@/lib/portal-cookie";
+import { getPortalSession } from "@/lib/portal-session";
 import "@/styles/globals.css";
 
 const cinzel = Cinzel({ subsets: ["latin"], variable: "--font-cinzel", weight: ["700"], display: "swap" });
@@ -36,8 +35,12 @@ export const viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const jar = await cookies();
-  const user = parsePortalSession(jar.get(PORTAL_COOKIE)?.value);
+  let user = null;
+  try {
+    user = await getPortalSession();
+  } catch {
+    user = null;
+  }
 
   return (
     <html lang="pt-BR">

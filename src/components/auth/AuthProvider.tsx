@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { parsePortalSession, PORTAL_COOKIE, type PortalSession } from "@/lib/portal-cookie";
+import type { PortalSession } from "@/lib/portal-cookie";
 
 export type PortalUser = PortalSession;
 
@@ -15,13 +15,6 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function readCookieUser(): PortalUser | null {
-  if (typeof document === "undefined") return null;
-  const row = document.cookie.split("; ").find((c) => c.startsWith(`${PORTAL_COOKIE}=`));
-  if (!row) return null;
-  return parsePortalSession(row.slice(PORTAL_COOKIE.length + 1));
-}
-
 export function AuthProvider({
   children,
   initialUser,
@@ -33,7 +26,7 @@ export function AuthProvider({
   const [ready, setReady] = useState(true);
 
   useEffect(() => {
-    setUser(initialUser ?? readCookieUser());
+    setUser(initialUser);
     setReady(true);
   }, [initialUser]);
 
@@ -44,7 +37,8 @@ export function AuthProvider({
       login: async () => "Use o formulário de entrar.",
       register: async () => "Use o formulário de criar conta.",
       logout: async () => {
-        window.location.href = "/api/portal/logout";
+        await fetch("/api/portal/logout", { method: "POST" });
+        window.location.href = "/entrar";
       },
     }),
     [user, ready]
