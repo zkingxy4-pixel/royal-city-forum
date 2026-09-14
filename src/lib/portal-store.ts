@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { compare, hash } from "bcryptjs";
+import { appendInboxRow, loadInboxRows } from "@/lib/inbox-blob";
 import { clip, isSafeText, isStrongPassword, isValidNickname } from "@/lib/security";
 import { insert, query } from "@/lib/db";
 
@@ -114,17 +115,22 @@ export async function loginPortalUser(identifier: string, password: string) {
   return "Apelido ou senha inválidos.";
 }
 
-async function appendJson(fileName: string, row: Record<string, string>) {
-  const file = path.join(dataDir, fileName);
-  let rows: Record<string, string>[] = [];
+async function appendJson(fileName: "influencer-requests.json" | "faction-requests.json", row: Record<string, string>) {
+  await appendInboxRow(fileName, row);
   try {
-    rows = JSON.parse(await readFile(file, "utf8")) as Record<string, string>[];
+    const file = path.join(dataDir, fileName);
+    let rows: Record<string, string>[] = [];
+    try {
+      rows = JSON.parse(await readFile(file, "utf8")) as Record<string, string>[];
+    } catch {
+      rows = [];
+    }
+    rows.push(row);
+    await mkdir(path.dirname(file), { recursive: true });
+    await writeFile(file, JSON.stringify(rows, null, 2), "utf8");
   } catch {
-    rows = [];
+    undefined;
   }
-  rows.push(row);
-  await mkdir(path.dirname(file), { recursive: true });
-  await writeFile(file, JSON.stringify(rows, null, 2), "utf8");
 }
 
 export async function saveInfluencerRequest(fields: Record<string, string>, nickname: string) {
@@ -232,7 +238,9 @@ export type InboxItem = {
   fields: Record<string, string>;
 };
 
-async function readJsonRows(fileName: string) {
+async function readJsonRows(fileName: "influencer-requests.json" | "faction-requests.json") {
+  const cloud = await loadInboxRows(fileName);
+  if (cloud.length) return cloud;
   try {
     return JSON.parse(await readFile(path.join(dataDir, fileName), "utf8")) as Record<string, string>[];
   } catch {

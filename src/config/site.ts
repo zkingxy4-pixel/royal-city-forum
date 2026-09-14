@@ -72,7 +72,6 @@ export const navItems = [
   { href: "/faccao", label: "Facção", featured: true },
   { href: "/eventos", label: "Eventos" },
   { href: "/influenciadores", label: "Influenciadores", featured: true },
-  { href: "/galeria", label: "Galeria" },
   { href: "/noticias", label: "Notícias" },
   { href: "/regras", label: "Regras" },
   { href: "/equipe", label: "Equipe" },

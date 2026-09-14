@@ -32,7 +32,10 @@ export async function POST(request: Request) {
     url.searchParams.set("enviado", "1");
     url.searchParams.set("protocolo", result.protocol);
     return NextResponse.redirect(url, 303);
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.message.includes("Cloud inbox")) {
+      return fail(request, "Não deu para gravar o relatório agora. Tenta de novo em instantes.");
+    }
     return fail(request, accountsOnlineMessage());
   }
 }

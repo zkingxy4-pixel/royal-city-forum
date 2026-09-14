@@ -9,7 +9,6 @@ const highlights = [
   { href: "/empregos", title: "Empregos", image: siteConfig.images.mecanica },
   { href: "/organizacoes", title: "Organizações", image: siteConfig.images.policia },
   { href: "/eventos", title: "Eventos", image: siteConfig.images.eventos },
-  { href: "/galeria", title: "Galeria", image: siteConfig.images.favela },
   { href: "/noticias", title: "Notícias", image: siteConfig.images.economia },
 ];
 

@@ -31,8 +31,7 @@ export default async function StaffPainelPage() {
           <div className="glass mt-8 rounded-2xl p-6">
             <p className="text-sm leading-relaxed text-white/70">Ainda não há formulários nesta lista.</p>
             <p className="mt-3 text-sm leading-relaxed text-white/50">
-              Envios feitos neste PC aparecem aqui. No site público, a lista só fica permanente quando o banco da nuvem
-              estiver ligado.
+              Quando alguém enviar o formulário de influenciador ou de facção no site, o relatório aparece aqui.
             </p>
           </div>
         ) : (
