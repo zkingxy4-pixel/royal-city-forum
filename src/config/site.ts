@@ -1,0 +1,80 @@
+export const siteConfig = {
+  name: "Royal City",
+  shortName: "ROYAL CITY",
+  tagline: "UMA NOVA HISTÓRIA COMEÇA AQUI.",
+  slogan: "Você não entra apenas em uma cidade. Você começa uma nova história.",
+  description:
+    "Portal oficial da Royal City RP. Uma cidade brasileira de Roleplay feita para quem quer construir sua própria história.",
+  year: 2026,
+  locale: "pt_BR",
+
+  SITE_URL: "https://royalcityrp.com.br",
+  DISCORD_URL: "https://discord.gg/vZ8nHYGazE",
+  INSTAGRAM_URL: "https://www.instagram.com/royalcity.rp",
+  TIKTOK_URL: "#",
+  YOUTUBE_URL: "#",
+
+  logo: "/assets/logo-royal-city-mark.png",
+  logoWhite: "/assets/logo-royal-city-white.png",
+  logoRed: "/assets/logo-royal-city-red.png",
+  favicon: "/favicon.png",
+  ogImage: "/og-royal-city.jpg",
+  hero: "/assets/hero-royal-city.jpg",
+  heroMobile: "/assets/hero-royal-city-mobile.jpg",
+  loading: "/assets/loading-royal-city.jpg",
+  bannerDiscord: "/assets/banner-discord.jpg",
+  bannerInstagram: "/assets/banner-instagram.jpg",
+  ctaFinal: "/assets/cta-final.jpg",
+  page404: "/assets/404-royal-city.jpg",
+
+  images: {
+    centro: "/assets/cidade-centro.jpg",
+    policia: "/assets/cidade-policia.jpg",
+    veiculos: "/assets/cidade-veiculos.jpg",
+    eventos: "/assets/cidade-eventos.jpg",
+    favela: "/assets/cidade-favela.jpg",
+    hospital: "/assets/cidade-hospital.jpg",
+    mecanica: "/assets/cidade-mecanica.jpg",
+    economia: "/assets/cidade-economia.jpg",
+    influenciadores: "/assets/influenciadores.jpg",
+  },
+
+  carousel: [
+    { src: "/assets/hero-royal-city.jpg", title: "A cidade não espera" },
+    { src: "/assets/cidade-centro.jpg", title: "O centro pulsa à noite" },
+    { src: "/assets/gallery-cidade-01.jpg", title: "Skyline da Royal" },
+    { src: "/assets/cidade-veiculos.jpg", title: "Patrimônio sobre rodas" },
+    { src: "/assets/gallery-carros-01.jpg", title: "Avenidas molhadas" },
+    { src: "/assets/cidade-eventos.jpg", title: "A Royal sempre acontece" },
+    { src: "/assets/gallery-eventos-01.jpg", title: "A cidade em festa" },
+    { src: "/assets/cidade-policia.jpg", title: "Ordem e presença" },
+    { src: "/assets/gallery-organizacoes-01.jpg", title: "Quem segura a cidade" },
+    { src: "/assets/cidade-economia.jpg", title: "Construa seu império" },
+    { src: "/assets/cidade-favela.jpg", title: "As comunidades" },
+    { src: "/assets/cidade-hospital.jpg", title: "Cuidado nas ruas" },
+    { src: "/assets/cidade-mecanica.jpg", title: "Oficina e graxa" },
+    { src: "/assets/gallery-roleplay-01.jpg", title: "Roleplay nas ruas" },
+    { src: "/assets/influenciadores.jpg", title: "Quem vive a Royal" },
+  ],
+
+  influencerWebhook: "",
+} as const;
+
+export const hasInstagram = siteConfig.INSTAGRAM_URL.startsWith("http");
+
+export const navItems = [
+  { href: "/", label: "Início" },
+  { href: "/sobre", label: "Sobre" },
+  { href: "/como-jogar", label: "Como jogar" },
+  { href: "/sistemas", label: "Sistemas" },
+  { href: "/empregos", label: "Empregos" },
+  { href: "/organizacoes", label: "Organizações" },
+  { href: "/faccao", label: "Facção", featured: true },
+  { href: "/eventos", label: "Eventos" },
+  { href: "/influenciadores", label: "Influenciadores", featured: true },
+  { href: "/galeria", label: "Galeria" },
+  { href: "/noticias", label: "Notícias" },
+  { href: "/regras", label: "Regras" },
+  { href: "/equipe", label: "Equipe" },
+  { href: "/faq", label: "FAQ" },
+] as const;
