@@ -101,7 +101,7 @@ export async function saveInfluencerRequest(fields: Record<string, string>, nick
   }
 
   const protocol = `RC-${Date.now().toString().slice(-8)}`;
-  const row = {
+  const row: Record<string, string> = {
     protocol,
     nickname,
     createdAt: new Date().toISOString(),
@@ -148,7 +148,7 @@ export async function saveFactionRequest(fields: Record<string, string>, nicknam
   }
 
   const protocol = `RF-${Date.now().toString().slice(-8)}`;
-  const row = {
+  const row: Record<string, string> = {
     protocol,
     nickname,
     createdAt: new Date().toISOString(),
