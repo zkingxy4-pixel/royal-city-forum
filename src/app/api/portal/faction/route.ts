@@ -13,10 +13,6 @@ function fail(request: Request, message: string) {
 export async function POST(request: Request) {
   try {
     const session = await getPortalSession();
-    if (!session) {
-      return NextResponse.redirect(new URL("/entrar", request.url), 303);
-    }
-
     if (!limited(request, "faction", 6).ok) {
       return fail(request, "Muitos envios. Espera um pouco e tenta de novo.");
     }
@@ -26,7 +22,7 @@ export async function POST(request: Request) {
       string,
       string
     >;
-    const result = await saveFactionRequest(fields, session.nickname);
+    const result = await saveFactionRequest(fields, session?.nickname || "");
 
     if (typeof result === "string") {
       return fail(request, result);

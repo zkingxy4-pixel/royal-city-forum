@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import { RequireAuth } from "@/components/auth/RequireAuth";
 import { FactionForm } from "@/components/FactionForm";
 import { siteConfig } from "@/config/site";
 
@@ -38,19 +37,17 @@ export default async function FaccaoRelatorioPage({
   }
 
   return (
-    <RequireAuth>
-      <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
-        <div className="glass mx-auto w-full max-w-2xl rounded-2xl p-6 sm:p-8">
-          <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">FACÇÃO</p>
-          <h1 className="mt-3 font-display text-3xl">Relatório da organização</h1>
-          <p className="mt-3 text-sm leading-relaxed text-white/70">
-            Oito perguntas. Seja direto: a staff usa isso para conhecer a facção e o líder.
-          </p>
-          <div className="mt-6">
-            <FactionForm error={query.erro} />
-          </div>
+    <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
+      <div className="glass mx-auto w-full max-w-2xl rounded-2xl p-6 sm:p-8">
+        <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">FACÇÃO</p>
+        <h1 className="mt-3 font-display text-3xl">Relatório da organização</h1>
+        <p className="mt-3 text-sm leading-relaxed text-white/70">
+          Oito perguntas. Seja direto: a staff usa isso para conhecer a facção e o líder.
+        </p>
+        <div className="mt-6">
+          <FactionForm error={query.erro} />
         </div>
       </div>
-    </RequireAuth>
+    </div>
   );
 }

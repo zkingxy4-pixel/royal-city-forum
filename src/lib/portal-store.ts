@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
 import { compare, hash } from "bcryptjs";
 import { clip, isSafeText, isStrongPassword, isValidNickname } from "@/lib/security";
+import { insert, query } from "@/lib/db";
 
 export type PortalUser = { nickname: string };
 
@@ -100,12 +101,25 @@ export async function saveInfluencerRequest(fields: Record<string, string>, nick
   }
 
   const protocol = `RC-${Date.now().toString().slice(-8)}`;
-  await appendJson("influencer-requests.json", {
+  const row = {
     protocol,
     nickname,
     createdAt: new Date().toISOString(),
     ...Object.fromEntries(required.map(([key, max]) => [key, clip(String(fields[key] || ""), max)])),
-  });
+  };
+  await appendJson("influencer-requests.json", row);
+  if (process.env.DB_PASSWORD?.trim()) {
+    try {
+      await insert(
+        `INSERT INTO influencer_requests
+          (user_id, nome, instagram, canal, plataforma, seguidores, views_media, perfil_url, conteudo_url, motivo)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [null, row.nome, row.instagram, row.canal, row.plataforma, row.seguidores, row.views, row.perfil, row.conteudo, row.motivo]
+      );
+    } catch {
+      undefined;
+    }
+  }
   return { protocol };
 }
 
@@ -134,11 +148,142 @@ export async function saveFactionRequest(fields: Record<string, string>, nicknam
   }
 
   const protocol = `RF-${Date.now().toString().slice(-8)}`;
-  await appendJson("faction-requests.json", {
+  const row = {
     protocol,
     nickname,
     createdAt: new Date().toISOString(),
     ...Object.fromEntries(required.map(([key, max]) => [key, clip(String(fields[key] || ""), max)])),
-  });
+  };
+  await appendJson("faction-requests.json", row);
+  if (process.env.DB_PASSWORD?.trim()) {
+    try {
+      await insert(
+        `INSERT INTO faction_requests
+          (protocol, nickname, nome_faccao, nome_lider, idade_lider, membros_ativos, discord_responsavel, territorio, estilo, historia)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          row.protocol,
+          row.nickname,
+          row.nomeFaccao,
+          row.nomeLider,
+          row.idadeLider,
+          row.membrosAtivos,
+          row.discordResponsavel,
+          row.territorio,
+          row.estilo,
+          row.historia,
+        ]
+      );
+    } catch {
+      undefined;
+    }
+  }
   return { protocol };
+}
+
+export type InboxItem = {
+  kind: "influencer" | "faction";
+  protocol: string;
+  createdAt: string;
+  nickname: string;
+  fields: Record<string, string>;
+};
+
+async function readJsonRows(fileName: string) {
+  try {
+    return JSON.parse(await readFile(path.join(dataDir, fileName), "utf8")) as Record<string, string>[];
+  } catch {
+    return [];
+  }
+}
+
+export async function listInbox(): Promise<InboxItem[]> {
+  const items: InboxItem[] = [];
+
+  for (const row of await readJsonRows("influencer-requests.json")) {
+    items.push({
+      kind: "influencer",
+      protocol: row.protocol || "",
+      createdAt: row.createdAt || "",
+      nickname: row.nickname || "",
+      fields: row,
+    });
+  }
+  for (const row of await readJsonRows("faction-requests.json")) {
+    items.push({
+      kind: "faction",
+      protocol: row.protocol || "",
+      createdAt: row.createdAt || "",
+      nickname: row.nickname || "",
+      fields: row,
+    });
+  }
+
+  if (process.env.DB_PASSWORD?.trim()) {
+    try {
+      const influencers = await query<Array<Record<string, unknown>>>(
+        `SELECT nome, instagram, canal, plataforma, seguidores, views_media, perfil_url, conteudo_url, motivo, created_at
+         FROM influencer_requests ORDER BY id DESC LIMIT 200`
+      );
+      for (const row of influencers) {
+        const createdAt = row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at || "");
+        items.push({
+          kind: "influencer",
+          protocol: `DB-${createdAt.slice(-8)}`,
+          createdAt,
+          nickname: "",
+          fields: {
+            nome: String(row.nome || ""),
+            instagram: String(row.instagram || ""),
+            canal: String(row.canal || ""),
+            plataforma: String(row.plataforma || ""),
+            seguidores: String(row.seguidores || ""),
+            views: String(row.views_media || ""),
+            perfil: String(row.perfil_url || ""),
+            conteudo: String(row.conteudo_url || ""),
+            motivo: String(row.motivo || ""),
+          },
+        });
+      }
+    } catch {
+      undefined;
+    }
+    try {
+      const factions = await query<Array<Record<string, unknown>>>(
+        `SELECT protocol, nickname, nome_faccao, nome_lider, idade_lider, membros_ativos, discord_responsavel, territorio, estilo, historia, created_at
+         FROM faction_requests ORDER BY id DESC LIMIT 200`
+      );
+      for (const row of factions) {
+        const createdAt = row.created_at instanceof Date ? row.created_at.toISOString() : String(row.created_at || "");
+        items.push({
+          kind: "faction",
+          protocol: String(row.protocol || ""),
+          createdAt,
+          nickname: String(row.nickname || ""),
+          fields: {
+            nomeFaccao: String(row.nome_faccao || ""),
+            nomeLider: String(row.nome_lider || ""),
+            idadeLider: String(row.idade_lider || ""),
+            membrosAtivos: String(row.membros_ativos || ""),
+            discordResponsavel: String(row.discord_responsavel || ""),
+            territorio: String(row.territorio || ""),
+            estilo: String(row.estilo || ""),
+            historia: String(row.historia || ""),
+          },
+        });
+      }
+    } catch {
+      undefined;
+    }
+  }
+
+  const seen = new Set<string>();
+  return items
+    .filter((item) => {
+      const key = `${item.kind}:${item.protocol}:${item.createdAt}:${item.fields.nome || item.fields.nomeFaccao || ""}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }

@@ -13,17 +13,13 @@ function fail(request: Request, message: string) {
 export async function POST(request: Request) {
   try {
     const session = await getPortalSession();
-    if (!session) {
-      return NextResponse.redirect(new URL("/entrar", request.url), 303);
-    }
-
     if (!limited(request, "influencer", 6).ok) {
       return fail(request, "Muitos envios. Espera um pouco e tenta de novo.");
     }
 
     const form = await request.formData();
     const fields = Object.fromEntries([...form.entries()].map(([key, value]) => [key, String(value)])) as Record<string, string>;
-    const result = await saveInfluencerRequest(fields, session.nickname);
+    const result = await saveInfluencerRequest(fields, session?.nickname || "");
 
     if (typeof result === "string") {
       return fail(request, result);

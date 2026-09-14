@@ -58,3 +58,20 @@ CREATE TABLE IF NOT EXISTS influencer_requests (
   KEY idx_influencer_user (user_id),
   CONSTRAINT fk_influencer_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS faction_requests (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  protocol VARCHAR(32) NOT NULL,
+  nickname VARCHAR(32) NOT NULL DEFAULT '',
+  nome_faccao VARCHAR(160) NOT NULL,
+  nome_lider VARCHAR(160) NOT NULL,
+  idade_lider VARCHAR(8) NOT NULL,
+  membros_ativos VARCHAR(8) NOT NULL,
+  discord_responsavel VARCHAR(80) NOT NULL,
+  territorio VARCHAR(400) NOT NULL,
+  estilo VARCHAR(40) NOT NULL,
+  historia TEXT NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  KEY idx_faction_protocol (protocol)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

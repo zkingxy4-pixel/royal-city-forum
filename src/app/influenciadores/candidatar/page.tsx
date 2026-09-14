@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/Button";
-import { RequireAuth } from "@/components/auth/RequireAuth";
 import { siteConfig } from "@/config/site";
 import { CandidatarForm } from "./CandidatarForm";
 
@@ -42,8 +41,6 @@ export default async function CandidatarInfluencerPage({
   }
 
   return (
-    <RequireAuth>
-      <CandidatarForm error={query.erro} />
-    </RequireAuth>
+    <CandidatarForm error={query.erro} />
   );
 }

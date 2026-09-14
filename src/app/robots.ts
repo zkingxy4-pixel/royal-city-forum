@@ -9,7 +9,10 @@ export default function robots(): MetadataRoute.Robots {
   }
 
   return {
-    rules: { userAgent: "*", allow: "/" },
+    rules: [
+      { userAgent: "*", allow: "/" },
+      { userAgent: "*", disallow: "/staff" },
+    ],
     sitemap: `${siteConfig.SITE_URL}/sitemap.xml`,
   };
 }
