@@ -24,10 +24,14 @@ function safeEqual(a: string, b: string) {
   return timingSafeEqual(left, right);
 }
 
+export function canSignPortalSession() {
+  return Boolean(authSecret());
+}
+
 export function serializePortalSession(user: PortalSession) {
   const secret = authSecret();
   if (!secret) {
-    throw new Error("AUTH_SECRET ausente ou curto demais. Defina no .env.local.");
+    throw new Error("AUTH_SECRET_MISSING");
   }
   const body: Payload = { n: user.nickname, e: Date.now() + SESSION_MS };
   const payload = Buffer.from(JSON.stringify(body)).toString("base64url");

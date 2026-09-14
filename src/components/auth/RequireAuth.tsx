@@ -8,7 +8,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black px-4 pt-32">
+      <div className="flex min-h-screen items-center justify-center bg-black px-4 pt-24 md:pt-16">
         <p className="text-sm tracking-[0.2em] uppercase text-white/50">Carregando...</p>
       </div>
     );
@@ -16,7 +16,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black px-4 pt-32 pb-16">
+      <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
         <div className="glass mx-auto w-full max-w-md rounded-2xl p-6 sm:p-8">
           <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">ACESSO DO PORTAL</p>
           <h1 className="mt-3 font-display text-3xl">Entre para continuar.</h1>

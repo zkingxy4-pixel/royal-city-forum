@@ -7,7 +7,8 @@ export type PortalUser = { nickname: string };
 
 type StoredUser = PortalUser & { email?: string; passwordHash: string };
 
-const filePath = path.join(process.cwd(), "data", "users.json");
+const dataDir = process.env.VERCEL ? path.join("/tmp", "royal-city") : path.join(process.cwd(), "data");
+const filePath = path.join(dataDir, "users.json");
 const MAX = {
   short: 80,
   medium: 160,
@@ -70,7 +71,7 @@ export async function loginPortalUser(identifier: string, password: string) {
 }
 
 async function appendJson(fileName: string, row: Record<string, string>) {
-  const file = path.join(process.cwd(), "data", fileName);
+  const file = path.join(dataDir, fileName);
   let rows: Record<string, string>[] = [];
   try {
     rows = JSON.parse(await readFile(file, "utf8")) as Record<string, string>[];

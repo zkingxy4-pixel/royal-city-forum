@@ -14,6 +14,10 @@ export function publicError(devMessage: string) {
   return process.env.NODE_ENV === "production" ? "Serviço temporariamente indisponível." : devMessage;
 }
 
+export function accountsOnlineMessage() {
+  return "O login na internet ainda não está ligado a um banco. As páginas da cidade estão no ar; contas ficam para o próximo passo.";
+}
+
 export function isValidNickname(value: string) {
   return /^[A-Za-z0-9._-]{2,32}$/.test(value);
 }

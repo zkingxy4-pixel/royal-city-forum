@@ -15,7 +15,9 @@ function isRetryableDbError(error: unknown) {
 function requiredEnv(name: string) {
   const value = process.env[name]?.trim();
   if (!value) {
-    throw new Error(`${name} não está definido. Use o arquivo .env.local.`);
+    const error = new Error(`${name} não está definido.`) as Error & { code: string };
+    error.code = "ER_ACCESS_DENIED_ERROR";
+    throw error;
   }
   return value;
 }

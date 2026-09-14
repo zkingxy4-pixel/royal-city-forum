@@ -9,7 +9,7 @@ export default function ContaPage() {
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black px-4 pt-32">
+      <div className="flex min-h-screen items-center justify-center bg-black px-4 pt-24 md:pt-16">
         <p className="text-sm uppercase tracking-[0.2em] text-white/50">Carregando...</p>
       </div>
     );
@@ -17,7 +17,7 @@ export default function ContaPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-black px-4 pt-32 pb-16">
+      <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
         <div className="mx-auto max-w-md rounded-2xl border border-white/10 p-8">
           <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">MINHA CONTA</p>
           <h1 className="mt-3 font-display text-3xl">Entre para ver sua conta.</h1>
@@ -34,7 +34,7 @@ export default function ContaPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black px-4 pt-32 pb-16">
+    <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
       <div className="mx-auto max-w-6xl">
         <p className="text-[11px] tracking-[0.3em] text-[#FF0000]">MINHA CONTA</p>
         <h1 className="mt-2 font-display text-4xl">Olá, {user.nickname}.</h1>

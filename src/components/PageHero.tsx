@@ -16,7 +16,7 @@ export function PageHero({
   ctaHref?: string;
 }) {
   return (
-    <section className="relative min-h-[42vh] overflow-hidden pt-24 sm:pt-28">
+    <section className="relative min-h-[42vh] overflow-hidden pt-20 md:pt-8">
       <img src={image} alt="" fetchPriority="high" decoding="async" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black" />
       <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 sm:px-6">
