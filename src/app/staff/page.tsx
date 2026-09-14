@@ -17,9 +17,9 @@ export default async function StaffLoginPage({
         <h1 className="mt-3 font-display text-3xl">Formulários</h1>
         <p className="mt-3 text-sm leading-relaxed text-white/65">Área privada para ver os relatórios enviados no site.</p>
         {query.erro ? <p className="mt-4 text-sm text-[#FF0000]">{query.erro}</p> : null}
-        <label className="mt-6 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
+        <label className="mt-6 grid gap-1 text-xs tracking-[0.16em] text-white/50">
           Senha da staff
-          <input required minLength={8} type="password" name="password" autoComplete="current-password" className={fieldClass} />
+          <input required minLength={8} type="password" name="password" autoComplete="current-password" className={`${fieldClass} lowercase`} style={{ textTransform: "none" }} />
         </label>
         <div className="mt-6">
           <button

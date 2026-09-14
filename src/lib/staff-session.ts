@@ -28,8 +28,9 @@ export function staffPasswordConfigured() {
 
 export function verifyStaffPassword(password: string) {
   const expected = process.env.STAFF_PASSWORD?.trim() || "";
-  if (!expected || !password) return false;
-  const left = Buffer.from(password);
+  const given = password.trim();
+  if (!expected || !given) return false;
+  const left = Buffer.from(given);
   const right = Buffer.from(expected);
   if (left.length !== right.length) return false;
   return timingSafeEqual(left, right);
