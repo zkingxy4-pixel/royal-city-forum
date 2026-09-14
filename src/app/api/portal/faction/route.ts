@@ -10,9 +10,19 @@ function fail(request: Request, message: string) {
   return NextResponse.redirect(url, 303);
 }
 
+function needAccount(request: Request) {
+  const url = new URL("/entrar", request.url);
+  url.searchParams.set("erro", "Entre na sua conta para enviar o relatório.");
+  url.searchParams.set("next", "/faccao/relatorio");
+  return NextResponse.redirect(url, 303);
+}
+
 export async function POST(request: Request) {
   try {
     const session = await getPortalSession();
+    if (!session) {
+      return needAccount(request);
+    }
     if (!limited(request, "faction", 6).ok) {
       return fail(request, "Muitos envios. Espera um pouco e tenta de novo.");
     }
@@ -22,7 +32,7 @@ export async function POST(request: Request) {
       string,
       string
     >;
-    const result = await saveFactionRequest(fields, session?.nickname || "");
+    const result = await saveFactionRequest(fields, session.nickname);
 
     if (typeof result === "string") {
       return fail(request, result);

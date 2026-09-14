@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { safePortalNext } from "@/lib/portal-next";
 
 const fieldClass =
   "rounded-md border border-white/10 bg-black/50 px-3 py-3 text-sm text-white normal-case tracking-normal";
@@ -6,9 +7,11 @@ const fieldClass =
 export default async function CriarContaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ ok?: string; nome?: string; erro?: string }>;
+  searchParams: Promise<{ ok?: string; nome?: string; erro?: string; next?: string }>;
 }) {
   const query = await searchParams;
+  const next = safePortalNext(query.next);
+  const entrarHref = next !== "/conta" ? `/entrar?next=${encodeURIComponent(next)}` : "/entrar";
 
   if (query.ok) {
     const nome = query.nome?.trim() || "jogador";
@@ -21,7 +24,7 @@ export default async function CriarContaPage({
             Sua conta foi criada. Agora entre com o mesmo apelido e a senha.
           </p>
           <div className="mt-8">
-            <Button href="/entrar" className="w-full">
+            <Button href={entrarHref} className="w-full">
               ENTRAR
             </Button>
           </div>
@@ -35,6 +38,7 @@ export default async function CriarContaPage({
       <form method="post" action="/api/portal/register" className="glass mx-auto w-full max-w-md rounded-2xl p-6 sm:p-8">
         <h1 className="font-display text-3xl">Criar conta</h1>
         {query.erro ? <p className="mt-4 text-sm text-[#FF0000]">{query.erro}</p> : null}
+        {next !== "/conta" ? <input type="hidden" name="next" value={next} /> : null}
         <label className="mt-6 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Apelido
           <input required name="nickname" minLength={2} maxLength={32} pattern="[A-Za-z0-9._-]+" title="Letras, números, ponto, _ ou -" autoComplete="username" className={fieldClass} />
@@ -56,7 +60,7 @@ export default async function CriarContaPage({
           </button>
         </div>
         <div className="mt-3">
-          <Button href="/entrar" variant="secondary" className="w-full">
+          <Button href={entrarHref} variant="secondary" className="w-full">
             ENTRAR
           </Button>
         </div>

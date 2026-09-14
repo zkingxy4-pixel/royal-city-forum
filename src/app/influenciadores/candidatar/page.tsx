@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/Button";
+import { ReportLoginGate } from "@/components/ReportLoginGate";
 import { siteConfig } from "@/config/site";
+import { getPortalSession } from "@/lib/portal-session";
 import { CandidatarForm } from "./CandidatarForm";
 
 export default async function CandidatarInfluencerPage({
@@ -8,6 +10,7 @@ export default async function CandidatarInfluencerPage({
   searchParams: Promise<{ enviado?: string; protocolo?: string; erro?: string }>;
 }) {
   const query = await searchParams;
+  const session = await getPortalSession();
 
   if (query.enviado) {
     const protocolo = query.protocolo?.trim();
@@ -38,6 +41,10 @@ export default async function CandidatarInfluencerPage({
         </div>
       </div>
     );
+  }
+
+  if (!session) {
+    return <ReportLoginGate next="/influenciadores/candidatar" />;
   }
 
   return (

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { safePortalNext } from "@/lib/portal-next";
 
 const fieldClass =
   "rounded-md border border-white/10 bg-black/50 px-3 py-3 text-sm text-white normal-case tracking-normal";
@@ -6,15 +7,18 @@ const fieldClass =
 export default async function EntrarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erro?: string }>;
+  searchParams: Promise<{ erro?: string; next?: string }>;
 }) {
   const query = await searchParams;
+  const next = safePortalNext(query.next);
+  const criarHref = next !== "/conta" ? `/criar-conta?next=${encodeURIComponent(next)}` : "/criar-conta";
 
   return (
     <div className="min-h-screen bg-black px-4 pt-24 pb-16 md:pt-16">
       <form method="post" action="/api/portal/login" className="glass mx-auto w-full max-w-md rounded-2xl p-6 sm:p-8">
         <h1 className="font-display text-3xl">Entrar</h1>
         {query.erro ? <p className="mt-4 text-sm text-[#FF0000]">{query.erro}</p> : null}
+        {next !== "/conta" ? <input type="hidden" name="next" value={next} /> : null}
         <label className="mt-6 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Apelido ou e-mail
           <input required name="nickname" minLength={2} maxLength={190} autoComplete="username" className={fieldClass} />
@@ -32,7 +36,7 @@ export default async function EntrarPage({
           </button>
         </div>
         <div className="mt-3">
-          <Button href="/criar-conta" variant="secondary" className="w-full">
+          <Button href={criarHref} variant="secondary" className="w-full">
             CRIAR CONTA
           </Button>
         </div>
