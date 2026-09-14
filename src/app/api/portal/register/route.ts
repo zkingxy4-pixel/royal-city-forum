@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { registerPortalUser } from "@/lib/portal-store";
+import { PORTAL_COOKIE } from "@/lib/portal-cookie";
+import { canSignPortalSession, portalCookieOptions, serializePortalSession } from "@/lib/portal-session";
 import { limited } from "@/lib/rate-limit";
 import { accountsOnlineMessage, publicSignupEnabled } from "@/lib/security";
 
@@ -20,10 +22,20 @@ export async function POST(request: Request) {
     }
 
     const form = await request.formData();
-    const result = await registerPortalUser(String(form.get("nickname") || ""), String(form.get("password") || ""));
+    const result = await registerPortalUser(
+      String(form.get("nickname") || ""),
+      String(form.get("password") || ""),
+      String(form.get("email") || "")
+    );
 
     if (typeof result === "string") {
       return fail(request, result);
+    }
+
+    if (canSignPortalSession()) {
+      const res = NextResponse.redirect(new URL("/conta", request.url), 303);
+      res.cookies.set(PORTAL_COOKIE, serializePortalSession(result), portalCookieOptions);
+      return res;
     }
 
     const url = new URL("/criar-conta", request.url);

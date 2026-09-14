@@ -40,6 +40,10 @@ export default async function CriarContaPage({
           <input required name="nickname" minLength={2} maxLength={32} pattern="[A-Za-z0-9._-]+" title="Letras, números, ponto, _ ou -" autoComplete="username" className={fieldClass} />
         </label>
         <label className="mt-4 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
+          E-mail
+          <input required type="email" name="email" autoComplete="email" className={fieldClass} />
+        </label>
+        <label className="mt-4 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Senha
           <input required minLength={8} maxLength={72} type="password" name="password" autoComplete="new-password" className={fieldClass} />
         </label>

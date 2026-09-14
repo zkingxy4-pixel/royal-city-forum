@@ -15,12 +15,9 @@ export default async function EntrarPage({
       <form method="post" action="/api/portal/login" className="glass mx-auto w-full max-w-md rounded-2xl p-6 sm:p-8">
         <h1 className="font-display text-3xl">Entrar</h1>
         {query.erro ? <p className="mt-4 text-sm text-[#FF0000]">{query.erro}</p> : null}
-        <p className="mt-4 text-sm leading-relaxed text-white/55">
-          No site público, o login ainda não usa o banco da cidade. Se aparecer erro, entra pelo Discord oficial.
-        </p>
         <label className="mt-6 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
-          Apelido
-          <input required name="nickname" minLength={2} maxLength={32} pattern="[A-Za-z0-9._-]+" title="Letras, números, ponto, _ ou -" autoComplete="username" className={fieldClass} />
+          Apelido ou e-mail
+          <input required name="nickname" minLength={2} maxLength={190} autoComplete="username" className={fieldClass} />
         </label>
         <label className="mt-4 grid gap-1 text-xs uppercase tracking-[0.16em] text-white/50">
           Senha

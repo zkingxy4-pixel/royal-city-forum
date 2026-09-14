@@ -21,54 +21,97 @@ async function hashPassword(password: string) {
   return hash(password, 12);
 }
 
+const globalForUsers = globalThis as typeof globalThis & { royalPortalUsers?: StoredUser[] };
+
 async function loadUsers(): Promise<StoredUser[]> {
   try {
     const raw = await readFile(filePath, "utf8");
-    return JSON.parse(raw) as StoredUser[];
+    const users = JSON.parse(raw) as StoredUser[];
+    globalForUsers.royalPortalUsers = users;
+    return users;
   } catch {
-    return [];
+    return globalForUsers.royalPortalUsers || [];
   }
 }
 
 async function saveUsers(users: StoredUser[]) {
+  globalForUsers.royalPortalUsers = users;
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, JSON.stringify(users, null, 2), "utf8");
 }
 
-export async function registerPortalUser(nickname: string, password: string) {
+function dbEmail(nickname: string, email?: string) {
+  const mail = email?.trim().toLowerCase();
+  if (mail) return mail;
+  return `${nickname.toLowerCase()}@conta.royalcityrp.local`;
+}
+
+export async function registerPortalUser(nickname: string, password: string, email = "") {
   const nick = nickname.trim();
+  const mail = email.trim().toLowerCase();
   if (!isValidNickname(nick)) return "Use um apelido de 2 a 32 caracteres (letras, números, ponto, _ ou -).";
+  if (mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)) return "Informe um e-mail válido.";
   if (!isStrongPassword(password)) return "A senha precisa ter pelo menos 8 caracteres.";
 
   const users = await loadUsers();
   if (users.some((u) => u.nickname.toLowerCase() === nick.toLowerCase())) return "Este apelido já está em uso.";
+  if (mail && users.some((u) => u.email?.toLowerCase() === mail)) return "Este e-mail já possui conta no portal.";
 
-  users.push({ nickname: nick, passwordHash: await hashPassword(password) });
+  const passwordHash = await hashPassword(password);
+  users.push({ nickname: nick, email: mail || undefined, passwordHash });
   await saveUsers(users);
+
+  if (process.env.DB_PASSWORD?.trim()) {
+    try {
+      await insert(`INSERT INTO users (nickname, email, password_hash) VALUES (?, ?, ?)`, [
+        nick,
+        dbEmail(nick, mail),
+        passwordHash,
+      ]);
+    } catch {
+      undefined;
+    }
+  }
   return { nickname: nick };
 }
 
 export async function loginPortalUser(identifier: string, password: string) {
   const id = identifier.trim().toLowerCase();
+  if (!id || !password) return "Apelido ou senha inválidos.";
+
   const users = await loadUsers();
-  const found = users.find((u) => u.nickname.toLowerCase() === id);
-  if (!found || !password) {
-    return "Apelido ou senha inválidos.";
-  }
+  const found = users.find((u) => u.nickname.toLowerCase() === id || u.email?.toLowerCase() === id);
 
-  let matches = false;
-  if (found.passwordHash.startsWith("royal:")) {
-    matches = found.passwordHash === `royal:${password}`;
-    if (matches) {
-      found.passwordHash = await hashPassword(password);
-      await saveUsers(users);
+  if (found) {
+    let matches = false;
+    if (found.passwordHash.startsWith("royal:")) {
+      matches = found.passwordHash === `royal:${password}`;
+      if (matches) {
+        found.passwordHash = await hashPassword(password);
+        await saveUsers(users);
+      }
+    } else {
+      matches = await compare(password, found.passwordHash);
     }
-  } else {
-    matches = await compare(password, found.passwordHash);
+    if (matches) return { nickname: found.nickname };
   }
 
-  if (!matches) return "Apelido ou senha inválidos.";
-  return { nickname: found.nickname };
+  if (process.env.DB_PASSWORD?.trim()) {
+    try {
+      const rows = await query<Array<{ nickname: string; password_hash: string }>>(
+        `SELECT nickname, password_hash FROM users WHERE email = ? OR LOWER(nickname) = ? LIMIT 1`,
+        [id, id]
+      );
+      const dbUser = rows[0];
+      if (dbUser && (await compare(password, dbUser.password_hash))) {
+        return { nickname: dbUser.nickname };
+      }
+    } catch {
+      undefined;
+    }
+  }
+
+  return "Apelido ou senha inválidos.";
 }
 
 async function appendJson(fileName: string, row: Record<string, string>) {

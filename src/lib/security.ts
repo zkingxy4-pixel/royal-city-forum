@@ -1,9 +1,7 @@
 import "server-only";
 
 export function publicSignupEnabled() {
-  if (process.env.ALLOW_PUBLIC_SIGNUP === "false") return false;
-  if (process.env.NODE_ENV === "production" && process.env.ALLOW_PUBLIC_SIGNUP !== "true") return false;
-  return true;
+  return process.env.ALLOW_PUBLIC_SIGNUP !== "false";
 }
 
 export function siteIndexingEnabled() {
